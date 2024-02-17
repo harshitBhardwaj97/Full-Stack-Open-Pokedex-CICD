@@ -1,6 +1,7 @@
 module.exports = {
   env: {
     node: true,
+    browser: true,
     es6: true,
     "jest/globals": true,
   },
@@ -16,13 +17,13 @@ module.exports = {
   rules: {
     indent: ["error", 2],
     "linebreak-style": 0,
-    quotes: ["warn", "single"],
-    semi: ["warn", "never"],
+    quotes: 0,
+    semi: 0,
     eqeqeq: "error",
     "no-trailing-spaces": "error",
     "object-curly-spacing": ["error", "always"],
     "arrow-spacing": ["error", { before: true, after: true }],
-    "no-console": "warn",
+    "no-console": 0,
     "react/prop-types": 0,
   },
 };
