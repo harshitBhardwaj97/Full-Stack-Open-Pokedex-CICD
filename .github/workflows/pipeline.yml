@@ -40,12 +40,12 @@ jobs:
     # needs: [build_and_test_app]
     runs-on: ubuntu-20.04
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: "0"
+      # - name: Checkout repository
+      #   uses: actions/checkout@v4
+      #   with:
+      #     fetch-depth: "0"
       - name: Trigger deployment
-        run: curl https://api.render.com/deploy/srv-${{ secrets.RENDER_SERVICE_ID }}?key=${{ secrets.RENDER_SECRET_KEY }}
+        run: curl https://api.render.com/deploy/srv
 
       - name: Notify about successful deployment
         uses: rjstone/discord-webhook-notify@v1
