@@ -10,12 +10,10 @@ app.listen(PORT, () => {
   console.log(`server started on port ${PORT}`);
 });
 
-app.get("/version", (req, res) => {
-  res.send("4"); // App should show 3 only, since this time deployment will fail
+app.get("/version", (_req, res) => {
+  res.send("5");
 });
 
-app.get("/health", (req, res) => {
-  // eslint-disable-next-line no-constant-condition
-  if (true) throw "error...  ";
+app.get("/health", (_req, res) => {
   res.send("ok");
 });
