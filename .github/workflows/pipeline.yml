@@ -33,9 +33,6 @@ jobs:
         with:
           start: npm run start-prod
           wait-on: http://localhost:5000
-      - name: Trigger deployment
-        if: ${{ github.event_name == 'push' }}
-        run: curl https://api.render.com/deploy/srv-${{ secrets.RENDER_SERVICE_ID }}?key=${{ secrets.RENDER_SECRET_KEY }}
 
   trigger_deployment:
     # Trigger deployment only on push on main, and also when #skip is not present in commit message
