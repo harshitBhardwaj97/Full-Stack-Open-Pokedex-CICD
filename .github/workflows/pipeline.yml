@@ -45,7 +45,7 @@ jobs:
       #   with:
       #     fetch-depth: "0"
       - name: Trigger deployment
-        run: curl https://api.render.com/deploy/srv
+        run: random command
 
       - name: Notify about successful deployment
         uses: rjstone/discord-webhook-notify@v1
