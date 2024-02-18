@@ -40,32 +40,14 @@ jobs:
     # needs: [build_and_test_app]
     runs-on: ubuntu-20.04
     steps:
-      # - name: Checkout repository
-      #   uses: actions/checkout@v4
-      #   with:
-      #     fetch-depth: "0"
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: "0"
       - name: Trigger deployment
-        run: random command
+        run: curl https://api.render.com/deploy/srv-${{ secrets.RENDER_SERVICE_ID }}?key=${{ secrets.RENDER_SECRET_KEY }}
 
-      - name: Notify about successful deployment
-        uses: rjstone/discord-webhook-notify@v1
-        if: ${{ success() }}
-        with:
-          severity: info
-          color: "#22BB33"
-          text: A new version of Pokedex deployed by ${{ github.event.head_commit.author.username }}
-          details: to ${{ github.repository }} by ${{ github.event.head_commit.author.username }}
-          webhookUrl: ${{ secrets.DISCORD_WEBHOOK }}
-
-      - name: Notify about unsuccessful deployment
-        uses: rjstone/discord-webhook-notify@v1
-        if: ${{ failure() }}
-        with:
-          severity: error
-          text: Build failed
-          color: "#BB2124"
-          details: https://github.com/${{ github.repository }}/commit/${{ github.sha }} by ${{ github.event.head_commit.author.username }} broke the build :(
-          webhookUrl: ${{ secrets.DISCORD_WEBHOOK }}
+        #Notification step removed temporarily
 
   tag_release:
     needs: [trigger_deployment]
