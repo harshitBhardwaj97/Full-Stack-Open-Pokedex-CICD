@@ -33,29 +33,6 @@ jobs:
         with:
           start: npm run start-prod
           wait-on: http://localhost:5000
-      - name: Share build_and_test_app success status
-        uses: rjstone/discord-webhook-notify@v1
-        if: ${{ success() }}
-        with:
-          severity: info
-          text: build_and_test_app step succeeded
-          color: "#ff00aa"
-          webhookUrl: ${{ secrets.DISCORD_WEBHOOK }}
-
-      - name: Share build_and_test_app failure status
-        uses: rjstone/discord-webhook-notify@v1
-        if: ${{ failure() }}
-        env:
-          DESCRIPTION: The failure was caused by ${{github.actor}} with commit ${{github.event.commits[0].id}}
-          AVATAR_URL: ${{github.event.sender.avatar_url}}
-        with:
-          severity: error
-          text: build_and_test_app step failed !
-          username: ${{github.actor}}
-          description: "$DESCRIPTION"
-          color: "#ff00aa"
-          avatarUrl: "$AVATAR_URL"
-          webhookUrl: ${{ secrets.DISCORD_WEBHOOK }}
 
   trigger_deployment:
     # Trigger deployment only on push on main, and also when #skip is not present in commit message
@@ -69,6 +46,26 @@ jobs:
           fetch-depth: "0"
       - name: Trigger deployment
         run: curl https://api.render.com/deploy/srv-${{ secrets.RENDER_SERVICE_ID }}?key=${{ secrets.RENDER_SECRET_KEY }}
+
+      - name: Notify about successful deployment
+        uses: rjstone/discord-webhook-notify@v1
+        if: ${{ success() }}
+        with:
+          severity: info
+          color: "#22BB33"
+          text: A new version of Pokedex deployed by ${{ github.event.head_commit.author.username }}
+          details: to ${{ github.repository }} by ${{ github.event.head_commit.author.username }}
+          webhookUrl: ${{ secrets.DISCORD_WEBHOOK }}
+
+      - name: Notify about unsuccessful deployment
+        uses: rjstone/discord-webhook-notify@v1
+        if: failure()
+        with:
+          severity: error
+          text: Build failed
+          color: "#BB2124"
+          details: https://github.com/${{ github.repository }}/commit/${{ github.sha }} by ${{ github.event.head_commit.author.username }} broke the build :(
+          webhookUrl: ${{ secrets.DISCORD_WEBHOOK }}
 
   tag_release:
     needs: [trigger_deployment]

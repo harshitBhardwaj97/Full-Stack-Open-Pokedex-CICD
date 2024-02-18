@@ -11,7 +11,7 @@ app.listen(PORT, () => {
 });
 
 app.get("/version", (_req, res) => {
-  res.send("14");
+  res.send("15"); // Ex 11.18 Success
 });
 
 app.get("/health", (_req, res) => {
