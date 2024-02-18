@@ -36,15 +36,10 @@ jobs:
       - name: Share build_and_test_app success status
         uses: rjstone/discord-webhook-notify@v1
         if: ${{ success() }}
-        env:
-          DESCRIPTION: Build_and_test_app step succeeded, with commit_id ${{github.event.commits[0].id}} and author ${{github.actor}}
-          AVATAR_URL: ${{github.event.sender.avatar_url}}
         with:
           severity: info
           text: build_and_test_app step succeeded
-          description: "$DESCRIPTION"
           color: "#ff00aa"
-          avatarUrl: "$AVATAR_URL"
           webhookUrl: ${{ secrets.DISCORD_WEBHOOK }}
 
       - name: Share build_and_test_app failure status
