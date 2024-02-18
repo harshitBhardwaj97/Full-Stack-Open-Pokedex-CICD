@@ -11,7 +11,7 @@ app.listen(PORT, () => {
 });
 
 app.get("/version", (_req, res) => {
-  res.send("12"); // Exercise 11.16, should be skipped (#skip)
+  res.send("13"); // Exercise 11.16, not adding #skip in commit message, hence version should be shown as 13 after merge request and deployment.
 });
 
 app.get("/health", (_req, res) => {
