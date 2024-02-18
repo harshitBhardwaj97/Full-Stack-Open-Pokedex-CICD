@@ -59,7 +59,7 @@ jobs:
 
       - name: Notify about unsuccessful deployment
         uses: rjstone/discord-webhook-notify@v1
-        if: failure()
+        if: ${{ failure() }}
         with:
           severity: error
           text: Build failed

@@ -11,7 +11,11 @@ app.listen(PORT, () => {
 });
 
 app.get("/version", (_req, res) => {
-  res.send("17"); // Ex 11.18 successful-deployment-branch
+  res.send("18"); // Ex 11.18 unsuccessful-deployment-branch test
+
+  console.log(
+    "This console log statement will fail the lintingm and hence resulting in unsuccessful deployment"
+  );
 });
 
 app.get("/health", (_req, res) => {
