@@ -1,12 +1,9 @@
 name: Periodic health check
 
+# Should check after every 5 min
 on:
-  push:
-    branches:
-      - main
-  pull_request:
-    branches: [main]
-    types: [opened, synchronize]
+  schedule:
+    - cron: "*/5 * * * *"
 
 jobs:
   periodic_health_check:
@@ -15,7 +12,6 @@ jobs:
       - name: Check the deployed service URL
         uses: jtalk/url-health-check-action@v4
         with:
-          # Service suspended, this should fail
           url: https://full-stack-open-pokedex-cicd.onrender.com/
           max-attempts: 3
           retry-delay: 2s
