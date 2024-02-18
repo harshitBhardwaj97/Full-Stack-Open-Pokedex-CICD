@@ -9,28 +9,61 @@ on:
     types: [opened, synchronize]
 
 jobs:
-  # deployment and tag_release steps removed temporarily
-  check_commit_message:
+  build_and_test_app:
     runs-on: ubuntu-20.04
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
           fetch-depth: "0"
-      - name: Print Commit(s)
+      - name: Setup Node JS
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+      - name: Install dependencies
+        run: npm install
+      - name: Check style
+        run: npm run eslint
+      - name: Build the app
+        run: npm run build
+      - name: Run tests
+        run: npm run test
+      - name: e2e tests
+        uses: cypress-io/github-action@v6
+        with:
+          start: npm run start-prod
+          wait-on: http://localhost:5000
+      - name: Trigger deployment
+        if: ${{ github.event_name == 'push' }}
+        run: curl https://api.render.com/deploy/srv-${{ secrets.RENDER_SERVICE_ID }}?key=${{ secrets.RENDER_SECRET_KEY }}
+
+  trigger_deployment:
+    # Trigger deployment only on push on main, and also when #skip is not present in commit message
+    if: ${{ github.event_name == 'push' && !contains(join(github.event.commits.*.message, ', '), '#skip') }}
+    needs: [build_and_test_app]
+    runs-on: ubuntu-20.04
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: "0"
+      - name: Trigger deployment
+        run: curl https://api.render.com/deploy/srv-${{ secrets.RENDER_SERVICE_ID }}?key=${{ secrets.RENDER_SECRET_KEY }}
+
+  tag_release:
+    needs: [trigger_deployment]
+    runs-on: ubuntu-20.04
+    steps:
+      - name: Checkout repository
+        with:
+          fetch-depth: "0"
+        uses: actions/checkout@v4
+      - name: Bump version and push tag
+        if: ${{ github.event_name == 'push' }}
+        uses: anothrNick/github-tag-action@1.64.0
         env:
-          COMMITS: ${{ toJson(github.event.commits) }}
-        run: echo "$COMMITS"
-      - name: Print Commit(s) Message
-        env:
-          COMMIT_MESSAGES: ${{ toJson(github.event.commits.*.message) }}
-        run: echo "$COMMIT_MESSAGES"
-      - name: Check Commit Messages
-        run: |
-          commit_message=$(git log --format=%B -n 1 ${{ github.sha }})
-          if [[ $commit_message == *'#skip'* ]]; then
-            echo "Commit contains '#skip'. Skipping deployment and tagging."
-            exit 0
-          else
-            echo "Commit does not contain '#skip'. Proceeding with deployment and tagging."
-          fi
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          WITH_V: true
+          #DRY_RUN: true
+          VERBOSE: true
+          DEFAULT_BUMP: patch
