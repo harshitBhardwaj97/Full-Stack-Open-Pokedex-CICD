@@ -11,7 +11,7 @@ app.listen(PORT, () => {
 });
 
 app.get("/version", (_req, res) => {
-  res.send("11"); // Exercise 11.16
+  res.send("12"); // Exercise 11.16, should be skipped (#skip)
 });
 
 app.get("/health", (_req, res) => {
